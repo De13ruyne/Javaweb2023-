@@ -7,5 +7,6 @@
 学号：2021230442150  
 姓名：尹金申  
 ### 源代码文档简要说明  
-代码位于eclipse02/Webcontent目录下
+代码位于eclipsepro02/Javaweb/WebContent目录下  
+eclipsepro02/Servers/Tomcat v9.0 Server at localhost-config目录下的是tomcat服务器  
 
