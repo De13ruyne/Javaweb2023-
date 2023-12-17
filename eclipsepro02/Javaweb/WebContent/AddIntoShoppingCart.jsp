@@ -1,0 +1,171 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@page import="java.sql.*"%>
+    <%@ page import="javax.servlet.http.HttpSession" %>
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+<meta charset="UTF-8">
+<title>Insert title here</title>
+	<style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .product {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .button {
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="button"] {
+              width: 100%;
+		      padding: 10px;
+		      background-color: #4caf50;
+		      color: #fff;
+		      border: none;
+		      border-radius: 4px;
+		      cursor: pointer;
+		      font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class = "container">
+
+<%
+
+String suser = request.getParameter("username");
+HttpSession session1 = request.getSession(false);
+//String session_username = (String) session1.getAttribute("username");
+if(session1 != null && session1.getAttribute("username") != null && suser.equals((String) session1.getAttribute("username")) == true) {
+%>
+
+
+
+<%
+
+String sgood = request.getParameter("goodname");
+//String suser = request.getParameter("username");
+String ss5 = "Mainpage.jsp?username=" + suser;
+
+out.println(suser);
+	try {
+		Class.forName("com.mysql.cj.jdbc.Driver"); //显示声明将数据库驱动程序注册到jdbc的驱动管理器中
+		String url = "jdbc:mysql://localhost:3306/db02"; //数据库名称为text（需要提前在MySQL里面建立text数据库）
+		String Username = "root"; //数据库用户名
+		String Password = "123456"; //数据库密码	
+		Connection conn = DriverManager.getConnection(url, Username, Password); //连接数据库
+		//out.print("数据库连接成功！");
+		/* conn.close(); */
+		String sql = "select *from buy_table;";
+		Statement stmt = conn.createStatement();
+		ResultSet rs = null;
+		rs = stmt.executeQuery(sql);
+		int boo = 0;
+		while(rs.next()) {
+			if(rs.getString("username").equals(suser)&&rs.getString("goodname").equals(sgood)) {
+				int num = rs.getInt("buynum") + 1;
+				Statement stmt2 = conn.createStatement();
+			  	stmt2 = conn.createStatement();
+			  	String sql2= "UPDATE buy_table SET buynum="+Integer.toString(num)+" WHERE username = '"+suser+"' and goodname = '"+sgood+"';";
+			  	int result = stmt.executeUpdate(sql2);
+				
+				
+				boo = 1;
+				break;
+			}
+		}
+		
+		
+		if(boo == 0) {
+			//Statement stmt2 = conn.createStatement();
+		  	stmt = conn.createStatement();
+		  	String sql2 = "insert into buy_table (username, goodname, buynum) values ('"+ suser + "','" + sgood + "','" + "1"+ "');";
+		  	//sql = "insert into usertable(username, userpw) values ('user01', '01')";
+		  	int result = stmt.executeUpdate(sql2);
+		}
+	
+		 conn.close(); 
+	} catch (Exception e) {
+		out.print("数据库连接失败！");
+		out.print("错误信息：" + e.toString());
+	}
+	
+	
+
+%>
+		<h1>商品添加成功</h1>
+
+		<button class='button' onclick="window.location.href='<%=ss5 %>';">返回</button>
+		
+<%
+}
+
+else {
+	%>
+	 <p>Error: Invalid username</p>
+	<button class='button' onclick="window.location.href='login.jsp';">注销用户</button>
+    
+	<%
+}
+
+
+%>
+
+</div>
+
+</body>
+</html>
